@@ -1,3 +1,6 @@
+// =======================
+// ORIGINAL CODE
+// =======================
 console.warn(
   "%cHello!!",
   "color: red; font-weight: 600; background: yellow; padding: 0 5px; border-radius: 5px",
@@ -39,3 +42,66 @@ if (window.localStorage.hasOwnProperty("icon")) {
   document.querySelector("link[rel=icon]").href = local_icon;
   console.log("Icon set to: " + local_icon);
 }
+
+// =======================
+// HEAVENLY GUM GAME FETCH + UI
+// =======================
+let games = [];
+
+function initGames() {
+  fetch("./config/games.json")
+    .then((response) => response.json())
+    .then((data) => {
+      games = data;
+      const container = document.getElementById("game-container");
+      container.innerHTML = ""; // clear any previous content
+      data.forEach((project) => {
+        const game = document.createElement("a");
+        game.href = project.link;
+        game.className = "game-link container";
+        game.innerHTML = `
+          <div class="game-tile">
+            <img class="game-icon" src="${project.imgSrc}" alt="icon" />
+            <p class="game-title">${project.title}</p>
+          </div>`;
+        container.appendChild(game);
+      });
+      document.getElementById("loader").style.display = "none";
+    })
+    .catch((error) => {
+      console.error("Error loading games.json:", error);
+      document.getElementById("loader").style.display = "none"; // hide loader even if fetch fails
+    });
+}
+
+function searchGames() {
+  const input = document.getElementById("search");
+  const filter = input.value.toUpperCase();
+  const container = document.getElementById("game-container");
+  container.innerHTML = "";
+  games
+    .filter((game) => game.title.toUpperCase().includes(filter))
+    .forEach((project) => {
+      const game = document.createElement("a");
+      game.href = project.link;
+      game.className = "game-link container";
+      game.innerHTML = `
+        <div class="game-tile">
+          <img class="game-icon" src="${project.imgSrc}" alt="icon" loading="lazy" />
+          <p class="game-title">${project.title}</p>
+        </div>`;
+      container.appendChild(game);
+    });
+}
+
+// Initialize game list when page loads
+window.addEventListener("DOMContentLoaded", initGames);
+
+// Back-to-top button logic
+const backToTopButton = document.getElementById("back-to-top");
+window.onscroll = function () {
+  if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+    backToTopButton.style.display = "block";
+  } else {
+    backToTopButton.style.
+
